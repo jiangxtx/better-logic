@@ -55,7 +55,7 @@ console.log('bigSum: ', bigSum('12e', 'a45'), bigSum('12X', 'a45'), bigSum('1', 
  * 【📌】大数相乘
  * TIPS: 总体路子和 bigSum 一致，只是加法口诀 → 乘法口诀了。乘法的底层就是加法逻辑！
  */
-function bigMultuple(str1, str2) {
+function bigMultipule(str1, str2) {
   const DIG = 62
   // 把str转换为10进制
   const strToDigtal = (str) => {
@@ -75,4 +75,65 @@ function bigMultuple(str1, str2) {
   return result
 }
 
-console.log('bigSquare: ', bigMultuple('2', 'a45'), bigMultuple('a1b2c3', 'a45'))
+console.log(
+  'bigMultipule  : ',
+  bigMultipule('2', 'a45'),
+  bigMultipule('a1b2c3', 'a45'),
+  bigMultipule('a1bokbsj132c3', 'a45')
+  // bigMultipule('14923sdfs9sdkfj234ks90923sdjf8affa1b2c3', '1039ssa45sduoew3o243ui2ois2341235') // too consume CPUs
+)
+
+/**
+ * 把十进制数number转换为62进制大数
+ * 思路：35转换为0x，35/16=2, 35%16=3,  35 → 23。123/10=12, 123%10=3 -
+ * @param {*} number
+ */
+function digtalToBig62(number) {
+  if (typeof number !== 'bigint') {
+    throw Error('number must be a BigInt')
+  }
+  const DIG = BigInt(62)
+  const result = []
+  while (number > 0) {
+    const rest = number % DIG
+    const divider = number / DIG
+    result.unshift(res2DigMap[rest]) // 低位数
+    // 判断高位数
+    if (divider < DIG) {
+      result.unshift(res2DigMap[divider])
+      break
+    }
+    number = divider
+  }
+  return result.join('')
+}
+
+/**
+ * 【📌】利用 BigInt 大数来计算大数相乘
+ * @param {*} str1
+ * @param {*} str2
+ */
+function bigMultipuleV2(str1, str2) {
+  const DIG = 62
+  // 把str转换为10进制
+  const strToDigtal = (str) => {
+    let result = 0
+    for (let i = str.length - 1; i >= 0; i--) {
+      result += Math.pow(DIG, str.length - 1 - i) * digMap[str[i]]
+    }
+    return result
+  }
+
+  // 10进制下的大数相乘结果
+  const digtalResult = BigInt(strToDigtal(str1)) * BigInt(strToDigtal(str2))
+  return digtalToBig62(digtalResult)
+}
+
+// ✅ wonderful! This result is equal wiht bigMultipule() method! Cool~ 2024-07-30 16:59
+console.log(
+  'bigMultipuleV2: ',
+  bigMultipuleV2('2', 'a45'),
+  bigMultipuleV2('a1b2c3', 'a45'),
+  bigMultipuleV2('a1bokbsj132c3', 'a45'),
+  bigMultipuleV2('14923sdfs9sdkfj234ks90923sdjf8affa1b2c3', '1039ssa45sduoew3o243ui2ois2341235')
+)
