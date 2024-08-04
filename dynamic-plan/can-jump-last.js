@@ -40,7 +40,7 @@ console.log(
 )
 
 /**
- * 【💡二】直线思维方式，只管往最大的步子去跳，直到不能跳跃为止
+ * 【💡二】贪心算法。直线思维方式，只管往最大的步子去跳，直到不能跳跃为止
  * @param {*} nums
  */
 function canJumpLastDriectly(nums) {
