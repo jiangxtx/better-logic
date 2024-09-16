@@ -74,3 +74,31 @@ const proxyFetch = new Proxy(window.fetch, {
   },
 })
 window.fetch = proxyFetch
+
+/**
+ * 【📌】通过 Proxy 来实现可手动取消的 fetch 请求
+ */
+const cancelableFetch = new Proxy(window.fetch, {
+  apply(target, thisArg, args) {
+    const ac = new AbortController()
+    const signal = ac.signal
+    args[1] = {
+      ...(args[1] || {}),
+      signal,
+    }
+    const p = target.apply(thisArg, args)
+    console.log('fetch apply...', args, target)
+    // 此处必须要bind，否则执行会报this指向异常
+    p.abort = ac.abort.bind(ac)
+    return p
+  },
+})
+window.cancelableFetch = cancelableFetch
+
+const p = cancelableFetch(
+  'http://localhost:8080/api/engine/decision_flow/version/detail?decisionFlowCode=test_decison_flow_1&version=v0.9'
+)
+setTimeout(() => {
+  console.log('timeout fetch..', typeof p.abort, p)
+  p.abort()
+}, 20)

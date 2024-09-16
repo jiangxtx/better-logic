@@ -101,3 +101,14 @@ const test = () => {
   xhr.send()
 }
 test()
+
+/* **************  Proxy ****************** */
+
+const XhrProxy = new Proxy(window.XMLHttpRequest, {
+  construct(target, args) {
+    const obj = new target(...args)
+    return new Proxy(obj, {})
+  },
+})
+
+window.XMLHttpRequest2 = XhrProxy

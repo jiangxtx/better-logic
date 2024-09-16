@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* flex 布局 */
+    .container {
+      position: relative;
+      display: flex;
+      border: 1px solid #eee;
+      height: 100vh;
+    }
+    .left {
+      width: 300px;
+      background-color: antiquewhite;
+    } 
+    .right {
+      height: 100vh;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .top {
+      height: 30%;
+      background-color: aqua;
+    }
+    .middle {
+      height: 50%;
+      background-color: yellowgreen;
+    } 
+
+    /* position 布局
+    .container {
+      position: relative;
+      border: 1px solid #eee;
+      height: 100vh;
+    }
+    .left {
+      width: 300px;
+      position: absolute;
+      height: 100vh;
+      background-color: antiquewhite;
+    }
+    .right {
+      height: 100vh;
+      padding-left: 300px;
+    }
+    .top {
+      height: 30%;
+      background-color: aqua;
+    }
+    .middle {
+      height: 50%;
+      background-color: yellowgreen;
+    } */
+    table {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-collapse: separate;
+    margin-bottom: 50px;
+}
+  </style>
+</head>
+<body>
+  <h3>列表</h3>
+  <table id="table" dataset="" border="1">
+      <thead>
+        <tr>
+          <th onclick="sort(0)">Name</th>
+          <th onclick="sort(1)">age</th>
+          <th onclick="sort(2)">City</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr>
+          <td>Jack</td>
+          <td>23</td>
+          <td>上海</td>
+        </tr>
+        <tr>
+          <td>Tomson</td>
+          <td>48</td>
+          <td>南京</td>
+        </tr>
+        <tr>
+          <td>Liuck Bol</td>
+          <td>92</td>
+          <td>上海</td>
+        </tr>
+      </tbody>
+  </table>
+
+  <div class="container">
+    <div class="left">左边</div>
+    <div class="right">
+      <div class="top">上边</div>
+      <div class="middle">中间</div>
+      <div class="bottom">底部</div>
+    </div>
+  </div>
+
+  
+</body>
+<script>
+  // A B 两个页面的纯前端交互方式：
+  // 方式一: 监听storage事件
+  // A页面
+  window.addEventListener('storage', data => {
+    console.log('storage: ', data)
+  })
+  // B页面
+  localStorage.setItem('message', 'cool guys!')
+
+  const sortMap = {}
+
+  function sort(colIndex) {
+    sortMap[colIndex] = sortMap[colIndex] || 'asc'
+    const tbody = document.getElementById('tbody')
+    const rows = [...tbody.children]
+
+    rows.sort((row1, row2) => {
+      const val1 = [...row1.children][colIndex].innerText
+      const val2 = [...row2.children][colIndex].innerText
+      console.log('sort...', val1, val2);
+      if(sortMap[colIndex] === 'asc') {
+        sortMap[colIndex] = 'desc'
+        return val1 > val2 ? 1 : -1
+      }
+      
+      if(sortMap[colIndex] === 'desc') {
+        sortMap[colIndex] = 'asc'
+        return val1 > val2 ? -1 : 1
+      }
+    })
+
+    while(tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild)
+    }
+    rows.forEach(row => tbody.appendChild(row))
+    console.log('sort: ', colIndex, rows);
+  }
+</script>
+</html>
