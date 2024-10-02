@@ -38,11 +38,12 @@ class Scheduler {
       throw new TypeError('promiseCreator must be a function')
     }
     this.queue.push(promiseCreator)
-    this.map.set(promiseCreator, this._genPendingPromise())
+    const p = this._genPendingPromise()
+    this.map.set(promiseCreator, p)
     this._run()
 
     // 返回一个Promise，用于业务的then链式调用
-    return this.map.get(promiseCreator)
+    return p
   }
 
   /**
