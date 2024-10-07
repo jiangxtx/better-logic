@@ -72,3 +72,50 @@ caches.set('id_3', { name: 'jack3' })
 caches.set('id_4', { name: 'jack4' })
 caches.set('id_5', { name: 'jack5' })
 caches.set('id_6', { name: 'jack6' })
+
+/**
+ * 上面的LruCache，有两大缺点：
+ * 1、Map的key是能够保证顺序的，这一点不像Object。所以，使用Map数据结构是最优解。
+   2、x秒后自动过期，不需要额外开一个定时器去轮询，太消耗性能了。
+ */
+class LruCacheByMap {
+  constructor(validTs, max) {
+    this.validTs = validTs
+    this.max = max
+    this.caches = new Map()
+  }
+
+  get(key) {
+    if (!this.caches.has(key)) {
+      return null
+    }
+    const result = this.caches.get(key)
+    if (result.expiredTime < Date.now()) {
+      this.caches.delete(key)
+      return null
+    }
+
+    result.expiredTime = this.validTs + Date.now()
+    this.caches.delete(key)
+    this.caches.set(key, result)
+    return result.value
+  }
+
+  set(key, value) {
+    if (this.caches.has(key)) {
+      const result = this.caches.get(key)
+      result.expiredTime = this.validTs + Date.now()
+      this.caches.delete(key)
+      this.caches.set(key, result)
+      return
+    }
+
+    if (this.caches.size >= this.max) {
+      const firstKey = this.caches.keys().next().value
+      this.caches.delete(firstKey)
+    }
+
+    const result = { value, expiredTime: this.validTs + Date.now() }
+    this.caches.set(key, result)
+  }
+}
