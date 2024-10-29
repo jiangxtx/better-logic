@@ -60,7 +60,35 @@ function paths2Treelist_recursion(paths) {
   return result
 }
 
+// console.log(
+//   'paths2Treelist_recursion..',
+//   JSON.stringify(paths2Treelist_recursion(['a/b/c', 'a/b/d/e', 'a/b/c/f/g']), null, 2)
+// )
+
+/**
+ *  * paths = ['a/b/c', 'a/b/d/e', 'a/b/c/f/g']
+ * [{name: 'a', children: [...]}]
+ */
+function formatAgain(paths) {
+  const result = []
+  paths.forEach((path) => {
+    const list = path.split('/')
+    let current = result
+    list.forEach((path) => {
+      const dest = current.find((item) => item.name === path)
+      if (!dest) {
+        const item = { name: path, children: [] }
+        current.push(item)
+        current = item.children
+      } else {
+        current = dest.children
+      }
+    })
+  })
+  return result
+}
+
 console.log(
-  'paths2Treelist_recursion..',
-  JSON.stringify(paths2Treelist_recursion(['a/b/c', 'a/b/d/e', 'a/b/c/f/g']), null, 2)
+  'formatAgain..',
+  JSON.stringify(formatAgain(['a/b/c', 'a/b/d/e', 'a/b/c/f/g']), null, 2)
 )

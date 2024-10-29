@@ -21,8 +21,8 @@
  */
 
 class Scheduler {
-  constructor(max = 2) {
-    this.max = 2 // 最大并发数
+  constructor(max = 10) {
+    this.max = max // 最大并发数
     this.currentCount = 0 // 当前进行中的并发数
     this.queue = []
     this.map = new WeakMap()
@@ -93,7 +93,7 @@ const timeout = (time, order) =>
     console.log('start>>', order, Date.now())
     setTimeout(resolve, time)
   }) //.then(() => console.log('end>>', order, Date.now()))
-const scheduler = new Scheduler()
+const scheduler = new Scheduler(2)
 const addTask = (time, order) => {
   scheduler.add(() => timeout(time, order)).then(() => console.log('end>>', order, Date.now()))
 }
